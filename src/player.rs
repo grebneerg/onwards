@@ -2,14 +2,14 @@ use std::fmt;
 
 use util::read_line;
 
-use item::InventoryItem;
+use item::Inventory;
 use item::equipment::Weapon;
 
 pub struct Player {
     name: String,
     health: u8,
     rank: String,
-    inventory: Vec<InventoryItem>,
+    inventory: Inventory,
     weapon: Weapon,
 }
 
@@ -21,7 +21,7 @@ impl Player {
             println!("What is your name?");
             name = read_line();
 
-            println!("So you name is {}? Y/n", name);
+            println!("So your name is {}? Y/n", name);
             let ans = read_line();
 
             if ans.starts_with('Y') || ans.starts_with('y') {
@@ -33,17 +33,8 @@ impl Player {
             name: name,
             health: 100,
             rank: String::from("noob"),
-            inventory: Vec::new(),
+            inventory: Inventory,
             weapon: Weapon { strength: 1 },
-        }
-    }
-
-    pub fn use_item(&mut self, item_idx: usize) {
-        if item_idx >= self.inventory.len() {
-            return;
-        }
-        match self.inventory[item_idx] {
-            _ => (),
         }
     }
 }

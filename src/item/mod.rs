@@ -7,3 +7,5 @@ pub mod equipment {
 pub enum InventoryItem {
     Weapon(equipment::Weapon),
 }
+
+pub struct Inventory;
