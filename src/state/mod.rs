@@ -1,9 +1,11 @@
+use std::fmt;
+
 use player::Player;
 
 /// Any event that could happen in the game.
 pub trait Event {
     /// A description of the current state to inform the player of what's going on.
-    fn describe(&self) -> String;
+    fn describe(&self, &Player) -> String;
 
     /// Advance to the next state based on user input.
     fn next(self: Box<Self>, &mut Player, &str) -> GameState;
@@ -30,7 +32,7 @@ impl Wandering {
 }
 
 impl Event for Wandering {
-    fn describe(&self) -> String {
+    fn describe(&self, _: &Player) -> String {
         format!("You are wandering {}", self.location)
     }
 
@@ -47,5 +49,80 @@ impl Event for Wandering {
 
     fn help_text(&self) -> String {
         format!("Wandering help: type 'move' to move")
+    }
+}
+
+pub struct Enemy {
+    pub health: usize,
+    pub strength: usize,
+    pub name: String,
+}
+
+impl fmt::Display for Enemy {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let mut h = String::new();
+        for i in 0..20 {
+            if i * 5 < self.health {
+                h.push('=');
+            } else {
+                h.push(' ');
+            }
+        }
+
+        write!(
+            f,
+            "{} -- Strength: {}\n[{}]({}%)",
+            self.name, self.strength, h, self.health
+        )
+    }
+}
+
+pub struct Battle {
+    enemy: Enemy,
+}
+
+impl Battle {
+    pub fn with(enemy: Enemy) -> GameState {
+        Box::new(Battle { enemy })
+    }
+}
+
+impl Event for Battle {
+    fn describe(&self, player: &Player) -> String {
+        format!("You are in a battle!\n{}\nVS\n{}", self.enemy, player)
+    }
+
+    /// Advance to the next state based on user input.
+    fn next(mut self: Box<Self>, player: &mut Player, cmd: &str) -> GameState {
+        /*
+        attack
+        */
+        match cmd {
+            // TODO: add more commands
+            "attack" => {
+                if self.enemy.health <= player.weapon.strength {
+                    self.enemy.health = 0;
+                    println!("{}\nYou have vanquished {}!", self.enemy, self.enemy.name);
+                    Wandering::at("at the zoo")
+                } else {
+                    self.enemy.health -= player.weapon.strength;
+                    println!("You dealt {} damage", player.weapon.strength);
+                    self
+                }
+            }
+            _ => {
+                use util;
+                util::invalid_command(cmd);
+                self
+            }
+        }
+    }
+
+    fn help_text(&self) -> String {
+        format!(
+            "Battle help:
+            
+        "
+        )
     }
 }

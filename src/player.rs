@@ -6,11 +6,11 @@ use item::Inventory;
 use item::equipment::Weapon;
 
 pub struct Player {
-    name: String,
-    health: u8,
-    rank: String,
-    inventory: Inventory,
-    weapon: Weapon,
+    pub name: String,
+    pub health: u8,
+    pub rank: String,
+    pub inventory: Inventory,
+    pub weapon: Weapon,
 }
 
 impl Player {

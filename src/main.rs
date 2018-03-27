@@ -5,21 +5,27 @@ mod state;
 
 use player::Player;
 use util::read_line;
-use state::{Event, GameState, Wandering};
+use state::{Event, GameState, Wandering, Battle, Enemy};
 
 fn display_help(state: &GameState) {
     println!("General commands:");
-    println!("
+    println!(
+        "
         disp => Show player info
         exit => Exit game
         help => Display this information
-    ");
+    "
+    );
 
     println!("{}", state.help_text());
 }
 
 fn main() {
-    let mut state: GameState = Wandering::at("Somewhere");
+    let mut state: GameState = Battle::with(Enemy {
+        name: "Fred".to_string(),
+        strength: 1,
+        health: 10,
+    }); //Wandering::at("Somewhere");
 
     println!("Welcome");
 
@@ -27,7 +33,7 @@ fn main() {
 
     println!("{}", player);
     loop {
-        println!("{}", state.describe());
+        println!("{}", state.describe(&player));
 
         let cmd = read_line();
 
