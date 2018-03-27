@@ -1,6 +1,6 @@
 use std::fmt;
 
-use player::Player;
+use player::{Player, PlayerCondition};
 
 /// Any event that could happen in the game.
 pub trait Event {
@@ -53,9 +53,19 @@ impl Event for Wandering {
 }
 
 pub struct Enemy {
-    pub health: usize,
-    pub strength: usize,
+    pub health: u32,
+    pub strength: u32,
     pub name: String,
+}
+
+impl Enemy {
+    pub fn new<S: Into<String>>(health: u32, strength: u32, name: S) -> Self {
+        Enemy {
+            health,
+            strength,
+            name: name.into()
+        }
+    }
 }
 
 impl fmt::Display for Enemy {
@@ -100,14 +110,17 @@ impl Event for Battle {
         match cmd {
             // TODO: add more commands
             "attack" => {
+                println!("You dealt {} damage", player.weapon.strength);
                 if self.enemy.health <= player.weapon.strength {
                     self.enemy.health = 0;
                     println!("{}\nYou have vanquished {}!", self.enemy, self.enemy.name);
                     Wandering::at("at the zoo")
                 } else {
                     self.enemy.health -= player.weapon.strength;
-                    println!("You dealt {} damage", player.weapon.strength);
-                    self
+                    match player.damage(self.enemy.strength) {
+                        PlayerCondition::Alive => self,
+                        PlayerCondition::Dead => Wandering::at("in the afterlife"),
+                    }
                 }
             }
             _ => {
@@ -120,8 +133,8 @@ impl Event for Battle {
 
     fn help_text(&self) -> String {
         format!(
-            "Battle help:
-            
+            "Battle help:\n
+        attack => Perform a simple attack
         "
         )
     }

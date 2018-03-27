@@ -5,9 +5,14 @@ use util::read_line;
 use item::Inventory;
 use item::equipment::Weapon;
 
+pub enum PlayerCondition {
+    Alive,
+    Dead,
+}
+
 pub struct Player {
     pub name: String,
-    pub health: u8,
+    pub health: u32,
     pub rank: String,
     pub inventory: Inventory,
     pub weapon: Weapon,
@@ -35,6 +40,18 @@ impl Player {
             rank: String::from("noob"),
             inventory: Inventory,
             weapon: Weapon { strength: 1 },
+        }
+    }
+    
+    pub fn damage(&mut self, damage: u32) -> PlayerCondition {
+        println!("You took {} damage!", damage);
+        if self.health <= damage {
+            self.health = 0;
+            println!("You have perished!");
+            PlayerCondition::Dead
+        } else {
+            self.health -= damage;
+            PlayerCondition::Alive
         }
     }
 }

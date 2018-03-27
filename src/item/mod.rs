@@ -1,6 +1,6 @@
 pub mod equipment {
     pub struct Weapon {
-        pub strength: usize,
+        pub strength: u32,
     }
 }
 
