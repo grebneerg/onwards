@@ -30,7 +30,7 @@ fn main() {
     println!("Welcome");
 
     let mut player = Player::introduce();
-
+	
     println!("{}", player);
     loop {
         println!("{}", state.describe(&player));
