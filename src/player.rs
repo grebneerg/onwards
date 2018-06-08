@@ -33,7 +33,7 @@ impl Player {
                 break;
             }
         }
-
+		
         Player {
             name: name,
             health: 100,
